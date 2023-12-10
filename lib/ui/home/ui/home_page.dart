@@ -1,10 +1,19 @@
+import 'dart:async';
+
+import 'package:battery_plus/battery_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:loc_poster/ui/history/ui/history_page.dart';
+import 'package:loc_poster/ui/home/data/models/data_model.dart';
+import 'package:loc_poster/ui/home/ui/widgets/loc_mixin.dart';
 import 'package:loc_poster/ui/home/ui/widgets/location_button.dart';
 import 'package:loc_poster/ui/home/ui/widgets/row_text.dart';
 import 'package:loc_poster/utils/assistants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
+
+part 'my_mixin.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +22,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with MainMixin, WidgetsBindingObserver {
   int son = 0;
   String id = '';
   String name = '';
@@ -31,8 +41,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    getData();
     super.initState();
+    initController(this);
+    getData();
   }
 
   @override
