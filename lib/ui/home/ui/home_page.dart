@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage>
   String name = '';
   String surname = '';
   String url = '';
+  int percent = 0;
 
   Future<void> getData() async {
     SharedPreferences instance = await SharedPreferences.getInstance();
@@ -36,6 +37,8 @@ class _HomePageState extends State<HomePage>
     name = instance.getString('login') ?? '';
     surname = instance.getString('password') ?? '';
     url = instance.getString('url') ?? '';
+    Battery battery = Battery();
+    percent = await battery.batteryLevel;
     setState(() {});
   }
 
@@ -80,7 +83,7 @@ class _HomePageState extends State<HomePage>
             RowText(title: "ID:", subtitle: id),
             RowText(title: "Login:", subtitle: name),
             RowText(title: "Parol:", subtitle: surname),
-            RowText(title: "Batereya:", subtitle: "85%"),
+            RowText(title: "Batereya:", subtitle: "$percent %"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

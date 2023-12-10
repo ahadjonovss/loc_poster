@@ -64,7 +64,7 @@ mixin MainMixin on State<HomePage> {
     if (v) {
       bool isLocationEnabled = false;
       _timer = Timer.periodic(
-        const Duration(seconds: 15),
+        const Duration(minutes: 5),
         (timer) async {
           if (lifeCycleState == AppLifecycleState.resumed) {
             if (await LocationMixin.instance.hasPermission()) {
@@ -117,8 +117,8 @@ mixin MainMixin on State<HomePage> {
         intervalDuration: const Duration(seconds: 5),
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           enableWakeLock: true,
-          notificationText: "Salom notif",
-          notificationTitle: 'DeleverUz',
+          notificationText: "DevCraft ishlamoqda...",
+          notificationTitle: 'Mazil ulashilmoqda...',
         ),
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||

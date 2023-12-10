@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -105,6 +106,8 @@ Future<int?> postWithDataAndHeaders() async {
   String url = instance.getString('url') ?? '';
   Position? position;
   String connection = await getConnectionType();
+  Battery battery = Battery();
+  int percent = await battery.batteryLevel;
   String admin = 'Basic 0JDQtNC80LjQvdC40YHRgtGA0LDRgtC+0YA6';
   if (isServiceEnabled) {
     position = await Geolocator.getCurrentPosition(
@@ -124,7 +127,7 @@ Future<int?> postWithDataAndHeaders() async {
     "latitude": position == null ? 0 : position.latitude.toString(),
     "longitude": position == null ? 0 : position.longitude.toString(),
     "agent_id": id,
-    "battery": "83%",
+    "battery": "$percent %",
     "accuracy": position == null ? '0 m' : '${position.accuracy} m',
     "gps": true,
     "internet": connection
