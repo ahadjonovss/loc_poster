@@ -26,11 +26,12 @@ mixin MainMixin on State<HomePage> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     if (!mounted) return;
+    SharedPreferences instance = await SharedPreferences.getInstance();
     // bloc = context.read<MainBloc>();
-    startAndStop(v: true);
+    startAndStop(v: true, duration: instance.getInt('duration') ?? 5);
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -60,16 +61,15 @@ mixin MainMixin on State<HomePage> {
     super.dispose();
   }
 
-  void startAndStop({bool v = false}) {
+  void startAndStop({bool v = false, int duration = 5}) {
     if (v) {
       bool isLocationEnabled = false;
       _timer = Timer.periodic(
-        const Duration(minutes: 5),
+        Duration(minutes: duration),
         (timer) async {
           if (lifeCycleState == AppLifecycleState.resumed) {
             if (await LocationMixin.instance.hasPermission()) {
               await streamLocation();
-              print("salom");
 
               // postWithDataAndHeaders();
               // if (localSource.hasProfile && await networkInfo.isConnected) {
