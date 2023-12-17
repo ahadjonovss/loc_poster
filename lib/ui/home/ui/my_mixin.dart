@@ -114,7 +114,7 @@ mixin MainMixin on State<HomePage> {
         distanceFilter: 100,
         useMSLAltitude: true,
         forceLocationManager: true,
-        intervalDuration: const Duration(seconds: 5),
+        intervalDuration: const Duration(minutes: 5),
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           enableWakeLock: true,
           notificationText: "DevCraft ishlamoqda...",

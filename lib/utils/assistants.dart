@@ -5,124 +5,9 @@ import 'dart:convert';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-Future<void> showCupertinoDialog(BuildContext context) async {
-  TextEditingController idController = TextEditingController();
-  TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController urlController = TextEditingController();
-  TextEditingController intervalCtrl = TextEditingController();
-
-  SharedPreferences instance = await SharedPreferences.getInstance();
-  idController.text = instance.getString('id') ?? '0';
-  loginController.text = instance.getString('login') ?? '';
-  passwordController.text = instance.getString('password') ?? '';
-  urlController.text = instance.getString('url') ?? '';
-  intervalCtrl.text = (instance.getInt('duration') ?? 5).toString();
-  print((instance.getString('start') ?? '7:00').split(":").first);
-  print("Salomjon");
-  TimeOfDay? startTime = TimeOfDay(
-      hour: int.parse((instance.getString('start') ?? '7:00').split(":").first),
-      minute: int.parse((instance.getString('start') ?? '7:00').split(":")[1]));
-  TimeOfDay? endTime = TimeOfDay(
-      hour: int.parse((instance.getString('end') ?? '21:00').split(":").first),
-      minute: int.parse((instance.getString('end') ?? '21:00').split(":")[1]));
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return CupertinoAlertDialog(
-        title: const Text("Ma'lumotlarni kiriting"),
-        content: Card(
-          color: Colors.transparent,
-          elevation: 0.0,
-          child: Column(
-            children: <Widget>[
-              TextField(
-                controller: idController,
-                decoration: const InputDecoration(
-                  labelText: 'ID',
-                ),
-              ),
-              TextField(
-                controller: loginController,
-                decoration: const InputDecoration(
-                  labelText: 'Login',
-                ),
-              ),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Parol',
-                ),
-              ),
-              TextField(
-                controller: urlController,
-                decoration: const InputDecoration(
-                  labelText: 'API',
-                ),
-              ),
-              TextField(
-                controller: intervalCtrl,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Interval',
-                ),
-              ),
-              Row(
-                children: [
-                  Text(
-                      "${makeClockFormat(startTime!.hour)}:${makeClockFormat(startTime!.minute)} - ${makeClockFormat(endTime!.hour)}:${makeClockFormat(endTime!.minute)}"),
-                  IconButton(
-                      onPressed: () async {
-                        startTime = await selectTime(context);
-                        endTime = await selectTime(context);
-                      },
-                      icon: Icon(Icons.edit))
-                ],
-              )
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          CupertinoDialogAction(
-            child: const Text('Bekor qilish'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          CupertinoDialogAction(
-            child: const Text('Saqlash'),
-            onPressed: () async {
-              // Handle the submitted data
-              String id = idController.text;
-              String login = loginController.text;
-              String password = passwordController.text;
-              String url = urlController.text;
-
-              SharedPreferences instance =
-                  await SharedPreferences.getInstance();
-              instance.setString('id', id);
-              instance.setString('login', login);
-              instance.setString('password', password);
-              instance.setString('url', url);
-              instance.setInt('duration', int.parse(intervalCtrl.text));
-              instance.setString(
-                  'start', "${startTime?.hour}:${startTime?.minute}");
-              instance.setString('end', "${endTime?.hour}:${endTime?.minute}");
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
 
 String stringToBase64(String inputString) {
   return base64Encode(utf8.encode(inputString));
@@ -155,7 +40,7 @@ Future<int?> postWithDataAndHeaders() async {
       'Content-Type': 'application/json',
       'Authorization': password.isEmpty
           ? admin
-          : 'Basic ${stringToBase64(login)}:${stringToBase64(password)}'
+          : 'Basic ${stringToBase64(login + ":" + password)}'
     };
 
     print(headers);
@@ -165,9 +50,9 @@ Future<int?> postWithDataAndHeaders() async {
       "latitude": position == null ? 0 : position.latitude.toString(),
       "longitude": position == null ? 0 : position.longitude.toString(),
       "agent_id": id,
-      "battery": "$percent %",
+      "battery": "$percent%",
       "accuracy": position == null ? '0 m' : '${position.accuracy} m',
-      "gps": true,
+      "gps": isServiceEnabled,
       "internet": connection
     });
 
@@ -177,9 +62,9 @@ Future<int?> postWithDataAndHeaders() async {
         "latitude": position == null ? 0 : position.latitude.toString(),
         "longitude": position == null ? 0 : position.longitude.toString(),
         "agent_id": id,
-        "battery": "${battery.batteryLevel}%",
+        "battery": "${percent}%",
         "accuracy": position == null ? '0 m' : '${position.accuracy} m',
-        "gps": true,
+        "gps": isServiceEnabled,
         "internet": connection
       });
 
@@ -190,14 +75,15 @@ Future<int?> postWithDataAndHeaders() async {
       statuses.add(response.statusCode.toString());
       instance.setStringList('statuses', statuses);
       instance.setStringList('times', times);
-      print("Success ${response.statusCode}");
+      print("Success ${response.statusCode} ${response.data}");
       return response.statusCode;
     } on DioError catch (e) {
       print("Errorga tushdi ${e.response?.statusCode}");
       List<String> times = instance.getStringList('times') ?? [];
       List<String> statuses = instance.getStringList('statuses') ?? [];
       times.add(DateTime.now().toString());
-      statuses.add(e.response!.statusCode.toString());
+      statuses
+          .add(e.response == null ? "null" : e.response!.statusCode.toString());
       instance.setStringList('statuses', statuses);
       instance.setStringList('times', times);
       return e.response?.statusCode;
