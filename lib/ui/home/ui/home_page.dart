@@ -82,7 +82,6 @@ class _HomePageState extends State<HomePage>
             const SizedBox(height: 20),
             RowText(title: "ID:", subtitle: id),
             RowText(title: "Login:", subtitle: name),
-            RowText(title: "Parol:", subtitle: surname),
             RowText(title: "Batereya:", subtitle: "$percent %"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -135,6 +134,7 @@ class _HomePageState extends State<HomePage>
           child: const Icon(Icons.edit),
           onPressed: () async {
             showCupertinoDialog(context);
+            // postWithDataAndHeaders();
           },
         ),
       ),

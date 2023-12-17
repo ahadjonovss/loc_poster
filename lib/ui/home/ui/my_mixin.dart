@@ -148,18 +148,14 @@ mixin MainMixin on State<HomePage> {
   Future<void> streamLocation() async {
     final int batteryPercent = await battery.batteryLevel;
     final Position position = await Geolocator.getCurrentPosition();
-    SharedPreferences instance = await SharedPreferences.getInstance();
-    String id = instance.getString('id') ?? '0';
-    String name = instance.getString('login') ?? '';
-    String surname = instance.getString('password') ?? '';
-    String url = instance.getString('url') ?? '';
+
     String connection = await getConnectionType();
 
     setState(() {});
     trackingList.add(TrackingModel(
       network: connection.toString(),
       battery: batteryPercent,
-      id: int.parse(id),
+      id: int.parse('1'),
       lat: position.latitude,
       long: position.longitude,
     ));

@@ -50,7 +50,6 @@ Future<void> showCupertinoDialog(BuildContext context) async {
               ),
               TextField(
                 controller: loginController,
-                obscureText: true,
                 decoration: const InputDecoration(
                   labelText: 'Login',
                 ),
@@ -78,7 +77,7 @@ Future<void> showCupertinoDialog(BuildContext context) async {
               Row(
                 children: [
                   Text(
-                      "${startTime!.hour} :${startTime!.minute}- ${endTime!.hour} :${endTime!.minute}"),
+                      "${makeClockFormat(startTime!.hour)}:${makeClockFormat(startTime!.minute)} - ${makeClockFormat(endTime!.hour)}:${makeClockFormat(endTime!.minute)}"),
                   IconButton(
                       onPressed: () async {
                         startTime = await selectTime(context);
@@ -109,8 +108,8 @@ Future<void> showCupertinoDialog(BuildContext context) async {
               SharedPreferences instance =
                   await SharedPreferences.getInstance();
               instance.setString('id', id);
-              instance.setString('password', login);
-              instance.setString('login', password);
+              instance.setString('login', login);
+              instance.setString('password', password);
               instance.setString('url', url);
               instance.setInt('duration', int.parse(intervalCtrl.text));
               instance.setString(
@@ -178,7 +177,7 @@ Future<int?> postWithDataAndHeaders() async {
         "latitude": position == null ? 0 : position.latitude.toString(),
         "longitude": position == null ? 0 : position.longitude.toString(),
         "agent_id": id,
-        "battery": "83%",
+        "battery": "${battery.batteryLevel}%",
         "accuracy": position == null ? '0 m' : '${position.accuracy} m',
         "gps": true,
         "internet": connection
@@ -191,8 +190,16 @@ Future<int?> postWithDataAndHeaders() async {
       statuses.add(response.statusCode.toString());
       instance.setStringList('statuses', statuses);
       instance.setStringList('times', times);
+      print("Success ${response.statusCode}");
       return response.statusCode;
     } on DioError catch (e) {
+      print("Errorga tushdi ${e.response?.statusCode}");
+      List<String> times = instance.getStringList('times') ?? [];
+      List<String> statuses = instance.getStringList('statuses') ?? [];
+      times.add(DateTime.now().toString());
+      statuses.add(e.response!.statusCode.toString());
+      instance.setStringList('statuses', statuses);
+      instance.setStringList('times', times);
       return e.response?.statusCode;
     }
   } else {
@@ -236,4 +243,8 @@ Future<bool> isCurrentTimeInRange() async {
 
   // Check if current time is between start and end time.
   return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+}
+
+String makeClockFormat(int i) {
+  return i < 10 ? "0$i" : i.toString();
 }
