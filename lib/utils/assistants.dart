@@ -128,9 +128,21 @@ Future<bool> isCurrentTimeInRange() async {
   int endMinutes = endTime.hour * 60 + endTime.minute;
 
   // Check if current time is between start and end time.
-  return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+  return currentMinutes >= startMinutes &&
+      currentMinutes <= endMinutes &&
+      some(instance);
 }
 
 String makeClockFormat(int i) {
   return i < 10 ? "0$i" : i.toString();
+}
+
+bool some(SharedPreferences instance) {
+  List<String> times =
+      instance.getStringList('times') ?? [DateTime.now().toString()];
+  int? interval = instance.getInt('duration');
+  DateTime last = DateTime.parse(times!.last);
+  last = last.add(Duration(minutes: interval!));
+  print("Min time ${last.toString()}");
+  return DateTime.now().isAfter(last);
 }

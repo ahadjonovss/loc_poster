@@ -252,7 +252,6 @@ class _HomePageState extends State<HomePage>
                     'start', "${startTime?.hour}:${startTime?.minute}");
                 instance.setString(
                     'end', "${endTime?.hour}:${endTime?.minute}");
-                startAndStop(duration: int.parse(intervalCtrl.text));
                 Navigator.of(context).pop();
               },
             ),

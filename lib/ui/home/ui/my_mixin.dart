@@ -65,7 +65,7 @@ mixin MainMixin on State<HomePage> {
     if (v) {
       bool isLocationEnabled = false;
       _timer = Timer.periodic(
-        Duration(minutes: duration),
+        Duration(minutes: 1),
         (timer) async {
           if (lifeCycleState == AppLifecycleState.resumed) {
             if (await LocationMixin.instance.hasPermission()) {
