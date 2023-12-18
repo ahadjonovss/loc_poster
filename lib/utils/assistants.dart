@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 
 import 'package:battery_plus/battery_plus.dart';
@@ -7,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:platform_device_id_v3/platform_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String stringToBase64(String inputString) {
@@ -23,6 +23,7 @@ Future<int?> postWithDataAndHeaders() async {
     bool isServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
     String id = instance.getString('id') ?? '0';
+    String? deviceId = await PlatformDeviceId.getDeviceId;
     String login = instance.getString('login') ?? '';
     String password = instance.getString('password') ?? '';
     String url = instance.getString('url') ?? '';
@@ -65,7 +66,8 @@ Future<int?> postWithDataAndHeaders() async {
         "battery": "${percent}%",
         "accuracy": position == null ? '0 m' : '${position.accuracy} m',
         "gps": isServiceEnabled,
-        "internet": connection
+        "internet": connection,
+        'program_key': deviceId
       });
 
       SharedPreferences instance = await SharedPreferences.getInstance();
@@ -139,7 +141,7 @@ String makeClockFormat(int i) {
 
 bool some(SharedPreferences instance) {
   List<String> times =
-      instance.getStringList('times') ?? [DateTime.now().toString()];
+      instance.getStringList('times') ?? [DateTime(2022).toString()];
   int? interval = instance.getInt('duration');
   DateTime last = DateTime.parse(times!.last);
   last = last.add(Duration(minutes: interval!));

@@ -23,7 +23,7 @@ class RowText extends StatelessWidget {
             width: 150,
             child: Text(
               subtitle,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
         ],

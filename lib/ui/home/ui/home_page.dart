@@ -11,6 +11,7 @@ import 'package:loc_poster/ui/home/ui/widgets/loc_mixin.dart';
 import 'package:loc_poster/ui/home/ui/widgets/location_button.dart';
 import 'package:loc_poster/ui/home/ui/widgets/row_text.dart';
 import 'package:loc_poster/utils/assistants.dart';
+import 'package:platform_device_id_v3/platform_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
@@ -31,10 +32,13 @@ class _HomePageState extends State<HomePage>
   String surname = '';
   String url = '';
   int percent = 0;
+  String deviceId = '';
 
   Future<void> getData() async {
     SharedPreferences instance = await SharedPreferences.getInstance();
     id = instance.getString('id') ?? '';
+    deviceId = await PlatformDeviceId.getDeviceId ?? '';
+
     name = instance.getString('login') ?? '';
     surname = instance.getString('password') ?? '';
     url = instance.getString('url') ?? '';
@@ -83,7 +87,8 @@ class _HomePageState extends State<HomePage>
             const SizedBox(height: 20),
             RowText(title: "ID:", subtitle: id),
             RowText(title: "Login:", subtitle: name),
-            RowText(title: "Batereya:", subtitle: "$percent %"),
+            RowText(title: "Battery:", subtitle: "$percent %"),
+            RowText(title: "DeviceID:", subtitle: "$deviceId"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -135,6 +140,8 @@ class _HomePageState extends State<HomePage>
           child: const Icon(Icons.edit),
           onPressed: () async {
             showCupertinoDialog(context);
+            // SharedPreferences instance = await SharedPreferences.getInstance();
+            // instance.clear();
             // postWithDataAndHeaders();
           },
         ),
@@ -156,7 +163,6 @@ class _HomePageState extends State<HomePage>
     urlController.text = instance.getString('url') ?? '';
     intervalCtrl.text = (instance.getInt('duration') ?? 5).toString();
     print((instance.getString('start') ?? '7:00').split(":").first);
-    print("Salomjon");
     TimeOfDay? startTime = TimeOfDay(
         hour:
             int.parse((instance.getString('start') ?? '7:00').split(":").first),
@@ -172,7 +178,7 @@ class _HomePageState extends State<HomePage>
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: const Text("Ma'lumotlarni kiriting"),
+          title: const Text("Fill in the details"),
           content: Card(
             color: Colors.transparent,
             elevation: 0.0,
@@ -194,7 +200,7 @@ class _HomePageState extends State<HomePage>
                   controller: passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
-                    labelText: 'Parol',
+                    labelText: 'Password',
                   ),
                 ),
                 TextField(
@@ -227,13 +233,13 @@ class _HomePageState extends State<HomePage>
           ),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: const Text('Bekor qilish'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             CupertinoDialogAction(
-              child: const Text('Saqlash'),
+              child: const Text('Save'),
               onPressed: () async {
                 // Handle the submitted data
                 String id = idController.text;
@@ -248,10 +254,10 @@ class _HomePageState extends State<HomePage>
                 instance.setString('password', password);
                 instance.setString('url', url);
                 instance.setInt('duration', int.parse(intervalCtrl.text));
-                instance.setString(
-                    'start', "${startTime?.hour}:${startTime?.minute}");
-                instance.setString(
-                    'end', "${endTime?.hour}:${endTime?.minute}");
+                instance.setString('start',
+                    "${startTime == null ? 7 : startTime!.hour}:${startTime == null ? 0 : startTime!.minute}");
+                instance.setString('end',
+                    "${endTime == null ? 21 : endTime!.hour}:${endTime == null ? 0 : endTime!.minute}");
                 Navigator.of(context).pop();
               },
             ),
