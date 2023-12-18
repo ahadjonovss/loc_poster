@@ -68,7 +68,7 @@ class _HistoryPageState extends State<HistoryPage> {
               style: const TextStyle(color: Colors.white),
             ),
             title: Text(
-              _items[0][index],
+              dateTimeToString(DateTime.parse(_items[0][index])),
               style: TextStyle(
                   color: _items[1][index] == "200" ? Colors.green : Colors.red),
             ),

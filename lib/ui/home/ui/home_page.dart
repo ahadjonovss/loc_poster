@@ -140,9 +140,6 @@ class _HomePageState extends State<HomePage>
           child: const Icon(Icons.edit),
           onPressed: () async {
             showCupertinoDialog(context);
-            // SharedPreferences instance = await SharedPreferences.getInstance();
-            // instance.clear();
-            // postWithDataAndHeaders();
           },
         ),
       ),

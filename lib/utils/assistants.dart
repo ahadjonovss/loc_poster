@@ -17,6 +17,7 @@ Future<int?> postWithDataAndHeaders() async {
   SharedPreferences instance = await SharedPreferences.getInstance();
 
   bool isWillSend = await isCurrentTimeInRange();
+
   if (isWillSend) {
     Dio dio = Dio();
 
@@ -128,6 +129,8 @@ Future<bool> isCurrentTimeInRange() async {
   int currentMinutes = currentTime.hour * 60 + currentTime.minute;
   int startMinutes = startTime.hour * 60 + startTime.minute;
   int endMinutes = endTime.hour * 60 + endTime.minute;
+  print(
+      "Range da ${currentMinutes >= startMinutes && currentMinutes <= endMinutes}");
 
   // Check if current time is between start and end time.
   return currentMinutes >= startMinutes &&
@@ -147,4 +150,17 @@ bool some(SharedPreferences instance) {
   last = last.add(Duration(minutes: interval!));
   print("Min time ${last.toString()}");
   return DateTime.now().isAfter(last);
+}
+
+String dateTimeToString(DateTime dateTime) {
+  String twoDigit(int n) => n.toString().padLeft(2, '0');
+
+  String hours = twoDigit(dateTime.hour);
+  String minutes = twoDigit(dateTime.minute);
+  String second = twoDigit(dateTime.second);
+  String day = twoDigit(dateTime.day);
+  String month = twoDigit(dateTime.month);
+  String year = dateTime.year.toString();
+
+  return "$hours:$minutes:$second / $day.$month.$year";
 }
