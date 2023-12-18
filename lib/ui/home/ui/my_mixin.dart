@@ -117,8 +117,8 @@ mixin MainMixin on State<HomePage> {
         intervalDuration: const Duration(minutes: 5),
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           enableWakeLock: true,
-          notificationText: "DevCraft ishlamoqda...",
-          notificationTitle: 'Mazil ulashilmoqda...',
+          notificationText: "DEVCRAFT Locator is working...",
+          notificationTitle: 'The location is being sent...',
         ),
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
