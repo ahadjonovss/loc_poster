@@ -9,6 +9,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:platform_device_id_v3/platform_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
+
 String stringToBase64(String inputString) {
   return base64Encode(utf8.encode(inputString));
 }
@@ -163,4 +165,42 @@ String dateTimeToString(DateTime dateTime) {
   String year = dateTime.year.toString();
 
   return "$hours:$minutes:$second / $day.$month.$year";
+}
+
+void showLocationDialog() {
+  showDialog<void>(
+    context: navigatorKey.currentState!.context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Location Permission'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(
+                  'This app collects background location data to enable certain features. This data may be streamed to our servers.'),
+              Text(
+                  'Please ensure you are comfortable with this before proceeding.'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Decline'),
+            onPressed: () {
+              // Handle the decline action
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Agree'),
+            onPressed: () async {
+              Navigator.pop(context);
+              await Geolocator.openAppSettings();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

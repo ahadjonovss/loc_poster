@@ -4,6 +4,7 @@ import 'package:loc_poster/ui/splash/ui/splash_page.dart';
 import 'package:loc_poster/utils/assistants.dart';
 import 'package:workmanager/workmanager.dart';
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 @pragma('vm:entry-point')
 void printHello() async {
   await postWithDataAndHeaders();
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(

@@ -18,7 +18,7 @@ mixin MainMixin on State<HomePage> {
         if (value) {
           point = await LocationMixin.instance.determinePosition();
         } else {
-          await Geolocator.openAppSettings();
+          showLocationDialog();
         }
       },
     );
